@@ -4,7 +4,7 @@ import { useNavigate, Link }   from 'react-router-dom';
 import { supabase }            from '../supabaseClient';
 import defaultAvatar           from '../assets/default avatar.jpg';
 
-export default function Connections() {
+export default function Dashboard() {
   const [profile,      setProfile]      = useState(null);
   const [stalkersList, setStalkersList] = useState([]);
   const [stalkedList,  setStalkedList]  = useState([]);
@@ -102,6 +102,8 @@ export default function Connections() {
         <section id="topbar">
           <i className="ph ph-files"></i>
           <Link to="/dashboard">{profile.username}'s Dashboard</Link>
+          <span>{'>'}</span>
+          <Link to="/connections">Connections</Link>
         </section>
 
         <section id="main-content">
