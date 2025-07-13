@@ -54,7 +54,7 @@ export default function Dashboard() {
             />
           </Link>
           <div className="bio-info">
-            <span className="bio-username"><Link to="/dashboard">@{profile.username}</Link></span>
+            <span className="bio-username"><Link to="/dashboard">{profile.username}</Link></span>
             <span className="bio-join-date">Member since {joinedDate}</span>
             <Link className="view-public-profile-button" to={`/profile/${profile.username}`}>View public profile</Link>
           </div>
@@ -64,7 +64,7 @@ export default function Dashboard() {
       <section id="right-content">
         <section id="topbar">
           <i class="ph ph-files"></i> 
-          <Link to="/dashboard">@{profile.username}'s Dashboard</Link>
+          <Link to="/dashboard">{profile.username}'s Dashboard</Link>
         </section>
         <section id="main-content">
           

@@ -115,7 +115,7 @@ export default function Profile() {
           <div className="bio-info">
             <span className="bio-username">
               <Link to={`/profile/${profile.username}`}>
-                @{profile.username}
+                {profile.username}
               </Link>
             </span>
             <span className="bio-join-date">
@@ -136,18 +136,18 @@ export default function Profile() {
         <section id="topbar">
           <i className="ph ph-files"></i>{' '}
           <Link to={`/profile/${profile.username}`}>
-            @{profile.username}'s Profile
+            {profile.username}'s Profile
           </Link>
         </section>
 
         <section id="main-content">
           <div className="stalker-stalked">
             <div className="stalked-section">
-              <span className="section-title"><i class="ph ph-eye"></i> Stalking</span>
+              <span className="section-title"><i class="ph ph-eye"></i> Stalking ({stalkedList.length})</span>
               {stalkedList.length > 0 ? (
                 <div className="avatar-grid">
                   {stalkedList.map(u => (
-                    <Link key={u.uuid} to={`/profile/${u.username}`} title={`@${u.username}`}>
+                    <Link key={u.uuid} to={`/profile/${u.username}`} title={`${u.username}`}>
                       <img
                         src={u.avatar_url || defaultAvatar}
                         alt={u.username}
@@ -162,11 +162,11 @@ export default function Profile() {
             </div>
 
             <div className="stalkers-section">
-              <span className="section-title"><i class="ph ph-eye-closed"></i> Stalkers</span>
+              <span className="section-title"><i class="ph ph-eye-closed"></i> Stalkers ({stalkersList.length})</span>
               {stalkersList.length > 0 ? (
                 <div className="avatar-grid">
                   {stalkersList.map(u => (
-                    <Link key={u.uuid} to={`/profile/${u.username}`} title={`@${u.username}`}>
+                    <Link key={u.uuid} to={`/profile/${u.username}`} title={`${u.username}`}>
                       <img
                         src={u.avatar_url || defaultAvatar}
                         alt={u.username}
