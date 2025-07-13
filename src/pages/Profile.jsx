@@ -44,23 +44,39 @@ export default function Profile() {
 
   const joinedDate = profile.created_at.slice(0, 10).replace(/-/g, '/');
 
-  const handleStalk = async () => {
-    if (!session || isStalking) return;
-    const { error } = await supabase
-      .from('Stalks')
-      .insert({
-        stalker_id: session.user.id,
-        stalked_id: profile.uuid,
-      });
-    if (!error) setIsStalking(true);
+  // Toggle stalk / unstalk
+  const handleStalkToggle = async () => {
+    if (!session) return;
+
+    if (isStalking) {
+      // Unstalk
+      const { error } = await supabase
+        .from('Stalks')
+        .delete()
+        .eq('stalker_id', session.user.id)
+        .eq('stalked_id', profile.uuid);
+      if (!error) setIsStalking(false);
+    } else {
+      // Stalk
+      const { error } = await supabase
+        .from('Stalks')
+        .insert({
+          stalker_id: session.user.id,
+          stalked_id: profile.uuid,
+        });
+      if (!error) setIsStalking(true);
+    }
   };
 
   const isOwn    = session?.user.id === profile.uuid;
   const isAnon   = !session;
-  const disabled = isAnon || isOwn || isStalking;
+  const disabled = isAnon || isOwn || false;  // only disable for anon & own
   const label    = isStalking ? 'Already stalking' : 'Stalk';
 
-  // build the className based on state
+  // Pick the right class:
+  // - stalking → .button-clicked
+  // - anon or own → .button-unclickable
+  // - otherwise default
   let btnClass = 'follow-button';
   if (isStalking) {
     btnClass += ' button-clicked';
@@ -71,7 +87,7 @@ export default function Profile() {
   return (
     <section id="sidebar">
       <div className="bio-header">
-        <Link to={`/profile/${profile.username}`} className="bio-avatar">
+        <Link to="/dashboard" className="bio-avatar">
           <img
             src={profile.avatar_url || defaultAvatar}
             alt={`${profile.username}’s avatar`}
@@ -79,12 +95,18 @@ export default function Profile() {
         </Link>
 
         <div className="bio-info">
-          <span className="bio-username"><Link to={`/profile/${profile.username}`}>@{profile.username}</Link></span>
-          <span className="bio-join-date">Member since {joinedDate}</span>
+          <span className="bio-username">
+            <Link to={`/profile/${profile.username}`}>
+              @{profile.username}
+            </Link>
+          </span>
+          <span className="bio-join-date">
+            Member since {joinedDate}
+          </span>
 
           <button
             className={btnClass}
-            onClick={handleStalk}
+            onClick={handleStalkToggle}
             disabled={disabled}
           >
             {label}
