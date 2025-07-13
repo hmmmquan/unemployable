@@ -91,13 +91,19 @@ export default function Profile() {
         .delete()
         .eq('stalker_id', session.user.id)
         .eq('stalked_id', profile.uuid);
-      if (!error) setIsStalking(false);
+      if (!error) {
+        setIsStalking(false);
+        load();
+      }
     } else {
       // Stalk
       const { error } = await supabase
         .from('Stalks')
         .insert({ stalker_id: session.user.id, stalked_id: profile.uuid });
-      if (!error) setIsStalking(true);
+      if (!error) {
+        setIsStalking(true);
+        load();
+      }
     }
   };
 
