@@ -6,9 +6,11 @@ import defaultAvatar           from '../assets/default avatar.jpg';
 
 export default function Profile() {
   const { username } = useParams();
-  const [profile,    setProfile]    = useState(null);
-  const [session,    setSession]    = useState(null);
-  const [isStalking, setIsStalking] = useState(false);
+  const [profile,      setProfile]      = useState(null);
+  const [session,      setSession]      = useState(null);
+  const [isStalking,   setIsStalking]   = useState(false);
+  const [stalkersList, setStalkersList] = useState([]);
+  const [stalkedList,  setStalkedList]  = useState([]);
 
   useEffect(() => {
     const load = async () => {
@@ -16,13 +18,13 @@ export default function Profile() {
       const { data: { session } } = await supabase.auth.getSession();
       setSession(session);
 
-      // Fetch profile using username 
+      // Fetch profile by username
       const { data: prof, error: profErr } = await supabase
         .from('Users')
         .select('uuid, username, avatar_url, created_at')
         .eq('username', username)
         .single();
-      if (profErr || !prof) return;  // Optionally show “not found”
+      if (profErr || !prof) return;
       setProfile(prof);
 
       // If signed in, check stalking status
@@ -33,6 +35,34 @@ export default function Profile() {
           .eq('stalker_id', session.user.id)
           .eq('stalked_id', prof.uuid);
         setIsStalking(count > 0);
+      }
+
+      // Load stalkers (who follow this profile)
+      const { data: sRows } = await supabase
+        .from('Stalks')
+        .select('stalker_id')
+        .eq('stalked_id', prof.uuid);
+      const stalkerIds = sRows.map(r => r.stalker_id);
+      if (stalkerIds.length > 0) {
+        const { data: stalkers } = await supabase
+          .from('Users')
+          .select('uuid, username, avatar_url')
+          .in('uuid', stalkerIds);
+        setStalkersList(stalkers);
+      }
+
+      // Load stalked (who this profile is stalking)
+      const { data: dRows } = await supabase
+        .from('Stalks')
+        .select('stalked_id')
+        .eq('stalker_id', prof.uuid);
+      const stalkedIds = dRows.map(r => r.stalked_id);
+      if (stalkedIds.length > 0) {
+        const { data: stalked } = await supabase
+          .from('Users')
+          .select('uuid, username, avatar_url')
+          .in('uuid', stalkedIds);
+        setStalkedList(stalked);
       }
     };
 
@@ -45,12 +75,12 @@ export default function Profile() {
   const isOwn      = session?.user.id === profile.uuid;
   const isAnon     = !session;
 
-  // toggles between stalking and unstalking
+  // Toggles between stalking and unstalking
   const handleStalkToggle = async () => {
-    if (!session) return; // no-op for anon
+    if (!session) return;
 
     if (isStalking) {
-      // unstalk
+      // Unstalk
       const { error } = await supabase
         .from('Stalks')
         .delete()
@@ -58,7 +88,7 @@ export default function Profile() {
         .eq('stalked_id', profile.uuid);
       if (!error) setIsStalking(false);
     } else {
-      // stalk
+      // Stalk
       const { error } = await supabase
         .from('Stalks')
         .insert({ stalker_id: session.user.id, stalked_id: profile.uuid });
@@ -66,39 +96,77 @@ export default function Profile() {
     }
   };
 
-  // determine button label & classes
-  const label   = isStalking ? 'Stalking' : 'Stalk';
-  let   btnCls  = 'follow-button';
-  if (isStalking)         btnCls += ' button-clicked';
-  else if (isAnon || isOwn) btnCls += ' button-unclickable';
+  // Determine button label & classes
+  const label = isStalking ? 'Stalking' : 'Stalk';
+  let btnCls  = 'follow-button';
+  if (isStalking)             btnCls += ' button-clicked';
+  else if (isAnon || isOwn)    btnCls += ' button-unclickable';
 
   return (
-    <section id="sidebar">
-      <div className="bio-header">
-        <Link to="/dashboard" className="bio-avatar">
-          <img
-            src={profile.avatar_url || defaultAvatar}
-            alt={`${profile.username}’s avatar`}
-          />
-        </Link>
-        <div className="bio-info">
-          <span className="bio-username">
-            <Link to={`/profile/${profile.username}`}>
-              @{profile.username}
-            </Link>
-          </span>
-          <span className="bio-join-date">
-            Member since {joinedDate}
-          </span>
-          <button
-            className={btnCls}
-            onClick={handleStalkToggle}
-            disabled={isAnon || isOwn}
-          >
-            {label}
-          </button>
+    <>
+      <section id="sidebar">
+        <div className="bio-header">
+          <Link to="/dashboard" className="bio-avatar">
+            <img
+              src={profile.avatar_url || defaultAvatar}
+              alt={`${profile.username}’s avatar`}
+            />
+          </Link>
+          <div className="bio-info">
+            <span className="bio-username">
+              <Link to={`/profile/${profile.username}`}>
+                @{profile.username}
+              </Link>
+            </span>
+            <span className="bio-join-date">
+              Member since {joinedDate}
+            </span>
+            <button
+              className={btnCls}
+              onClick={handleStalkToggle}
+              disabled={isAnon || isOwn}
+            >
+              {label}
+            </button>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <section id="right-content">
+        <section id="topbar">
+          <i className="ph ph-files"></i>{' '}
+          <Link to={`/profile/${profile.username}`}>
+            @{profile.username}'s Profile
+          </Link>
+        </section>
+
+        <section id="main-content">
+          <div className="stalker-stalked" style={{ display: 'flex', gap: '1rem' }}>
+            <div className="stalkers">
+              {stalkersList.map(u => (
+                <Link key={u.uuid} to={`/profile/${u.username}`}>
+                  <img
+                    src={u.avatar_url || defaultAvatar}
+                    alt={u.username}
+                    className="small-avatar"
+                  />
+                </Link>
+              ))}
+            </div>
+            <div className="stalked">
+              {stalkedList.map(u => (
+                <Link key={u.uuid} to={`/profile/${u.username}`}>
+                  <img
+                    src={u.avatar_url || defaultAvatar}
+                    alt={u.username}
+                    className="small-avatar"
+                  />
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      </section>
+    </>
   );
 }

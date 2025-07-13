@@ -19,6 +19,9 @@
     --button-font-color: #ffffff;
     --button-unclickable-background-color: #4c4c4c;
     --button-clicked-background-color: #00ac25;
+
+    --topbar-background-color: #eaeaea;
+    --topbar-font-color: #000000;
 }
 
 * {
@@ -118,4 +121,31 @@ a {
 
 .button-clicked {
     background-color: var(--button-clicked-background-color);
+}
+
+/* right content */
+
+#right-content {
+    width: 100%;
+}
+
+#topbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: var(--topbar-background-color);
+    color: var(--topbar-font-color);
+    padding: 5px 10px;
+}
+
+#topbar a {
+    color: var(--topbar-font-color);
+    text-decoration: none;
+}
+
+#main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 100px;
+    margin: 50px 50px 0 50px;
 }
