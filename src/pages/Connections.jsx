@@ -1,10 +1,10 @@
-// src/pages/Dashboard.jsx
+// src/pages/Connections.jsx
 import { useState, useEffect } from 'react';
 import { useNavigate, Link }   from 'react-router-dom';
 import { supabase }            from '../supabaseClient';
 import defaultAvatar           from '../assets/default avatar.jpg';
 
-export default function Dashboard() {
+export default function Connections() {
   const [profile,      setProfile]      = useState(null);
   const [stalkersList, setStalkersList] = useState([]);
   const [stalkedList,  setStalkedList]  = useState([]);

@@ -128,7 +128,7 @@ export default function Profile() {
             </span>
             
             {isOwn ? (
-              <Link to="/dashboard" className="view-public-profile-button">Go to dashboard</Link>
+              <Link to="/dashboard" className="view-public-profile-button">Go to Dashboard</Link>
             ) : (
               <button
                 className={btnCls}
