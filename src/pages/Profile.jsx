@@ -99,11 +99,11 @@ export default function Profile() {
   // Determine button label & classes
   const label = isStalking ? 'Stalking' : 'Stalk';
   let btnCls  = 'follow-button';
-  if (isStalking)             btnCls += ' button-clicked';
-  else if (isAnon || isOwn)    btnCls += ' button-unclickable';
+  if (isStalking)           btnCls += ' button-clicked';
+  else if (isAnon || isOwn) btnCls += ' button-unclickable';
 
   return (
-    <>
+    <div className="profile-layout">
       <section id="sidebar">
         <div className="bio-header">
           <Link to="/dashboard" className="bio-avatar">
@@ -141,32 +141,47 @@ export default function Profile() {
         </section>
 
         <section id="main-content">
-          <div className="stalker-stalked" style={{ display: 'flex', gap: '1rem' }}>
-            <div className="stalkers">
-              {stalkersList.map(u => (
-                <Link key={u.uuid} to={`/profile/${u.username}`}>
-                  <img
-                    src={u.avatar_url || defaultAvatar}
-                    alt={u.username}
-                    className="small-avatar"
-                  />
-                </Link>
-              ))}
+          <div className="stalker-stalked">
+            <div className="stalked-section">
+              <span className="section-title"><i class="ph ph-eye"></i> Stalking</span>
+              {stalkedList.length > 0 ? (
+                <div className="avatar-grid">
+                  {stalkedList.map(u => (
+                    <Link key={u.uuid} to={`/profile/${u.username}`} title={`@${u.username}`}>
+                      <img
+                        src={u.avatar_url || defaultAvatar}
+                        alt={u.username}
+                        className="small-avatar"
+                      />
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                  <p>This user is not stalking anyone.</p>
+              )}
             </div>
-            <div className="stalked">
-              {stalkedList.map(u => (
-                <Link key={u.uuid} to={`/profile/${u.username}`}>
-                  <img
-                    src={u.avatar_url || defaultAvatar}
-                    alt={u.username}
-                    className="small-avatar"
-                  />
-                </Link>
-              ))}
+
+            <div className="stalkers-section">
+              <span className="section-title"><i class="ph ph-eye-closed"></i> Stalkers</span>
+              {stalkersList.length > 0 ? (
+                <div className="avatar-grid">
+                  {stalkersList.map(u => (
+                    <Link key={u.uuid} to={`/profile/${u.username}`} title={`@${u.username}`}>
+                      <img
+                        src={u.avatar_url || defaultAvatar}
+                        alt={u.username}
+                        className="small-avatar"
+                      />
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <p>This user doesn’t have any stalkers.</p>
+              )}
             </div>
           </div>
         </section>
       </section>
-    </>
+    </div>
   );
 }

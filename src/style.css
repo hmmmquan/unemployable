@@ -9,6 +9,7 @@
 
     --headline-font-size: 20px;
     --headline-font-weight: 600;
+    --headline-font-color: #000000;
 
     --sidebar-background-color: #272727;
     --sidebar-font-color: #8c8c8c;
@@ -22,6 +23,9 @@
 
     --topbar-background-color: #eaeaea;
     --topbar-font-color: #000000;
+
+    --box-background-color: #ffffff;
+    --box-shadow: 0px 1px 4px -1px #dddddd;
 }
 
 * {
@@ -44,7 +48,7 @@ a {
     transition: all 0.2s;
 }
 
-div#root {
+.profile-layout {
     display: flex;
 }
 
@@ -152,4 +156,45 @@ div#root {
     flex-direction: column;
     gap: 100px;
     margin: 50px 50px 0 50px;
+} 
+
+.stalker-stalked {
+  display: flex;
+  gap: 50px;
+}
+
+.stalked-section,
+.stalkers-section {
+  flex: 1;
+  background-color: var(--box-background-color);
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: var(--box-shadow);
+}
+
+.avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 30px);
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.avatar-grid a {
+    line-height: 0;
+}
+
+.small-avatar {
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--headline-font-color);
+    font-size: var(--headline-font-size);
+    font-weight: var(--headline-font-weight);
 }

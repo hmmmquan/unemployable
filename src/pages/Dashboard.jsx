@@ -44,20 +44,32 @@ export default function Dashboard() {
   };
 
   return (
-    <section id="sidebar">
-      <div className="bio-header">
-        <Link to="/dashboard" className="bio-avatar">
-          <img
-            src={profile.avatar_url || defaultAvatar}
-            alt={`${profile.username}’s avatar`}
-          />
-        </Link>
-        <div className="bio-info">
-          <span className="bio-username"><Link to="/dashboard">@{profile.username}</Link></span>
-          <span className="bio-join-date">Member since {joinedDate}</span>
-          <Link className="view-public-profile-button" to={`/profile/${profile.username}`}>View public profile</Link>
+    <div className="profile-layout">
+      <section id="sidebar">
+        <div className="bio-header">
+          <Link to="/dashboard" className="bio-avatar">
+            <img
+              src={profile.avatar_url || defaultAvatar}
+              alt={`${profile.username}’s avatar`}
+            />
+          </Link>
+          <div className="bio-info">
+            <span className="bio-username"><Link to="/dashboard">@{profile.username}</Link></span>
+            <span className="bio-join-date">Member since {joinedDate}</span>
+            <Link className="view-public-profile-button" to={`/profile/${profile.username}`}>View public profile</Link>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <section id="right-content">
+        <section id="topbar">
+          <i class="ph ph-files"></i> 
+          <Link to="/dashboard">@{profile.username}'s Dashboard</Link>
+        </section>
+        <section id="main-content">
+          
+        </section>
+      </section>
+    </div>
   );
 }
