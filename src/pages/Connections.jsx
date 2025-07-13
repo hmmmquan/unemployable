@@ -34,7 +34,7 @@ export default function Connections() {
       // Load stalkers (who follow me)
       const { data: sRows } = await supabase
         .from('Stalks')
-        .select('stalker_id')
+        .select('stalker_id, created_at')
         .eq('stalked_id', data.uuid);
       const stalkerIds = sRows.map(r => r.stalker_id);
       if (stalkerIds.length > 0) {
@@ -42,13 +42,18 @@ export default function Connections() {
           .from('Users')
           .select('uuid, username, avatar_url')
           .in('uuid', stalkerIds);
-        setStalkersList(stalkers);
+        // attach the timestamp
+        const enrichedStalkers = stalkers.map(u => {
+          const rel = sRows.find(r => r.stalker_id === u.uuid);
+          return { ...u, followedAt: rel.created_at };
+        });
+        setStalkersList(enrichedStalkers);
       }
 
       // Load stalked (who I am stalking)
       const { data: dRows } = await supabase
         .from('Stalks')
-        .select('stalked_id')
+        .select('stalked_id, created_at')
         .eq('stalker_id', data.uuid);
       const stalkedIds = dRows.map(r => r.stalked_id);
       if (stalkedIds.length > 0) {
@@ -56,7 +61,12 @@ export default function Connections() {
           .from('Users')
           .select('uuid, username, avatar_url')
           .in('uuid', stalkedIds);
-        setStalkedList(stalked);
+        // attach the timestamp
+        const enrichedStalked = stalked.map(u => {
+          const rel = dRows.find(r => r.stalked_id === u.uuid);
+          return { ...u, followedAt: rel.created_at };
+        });
+        setStalkedList(enrichedStalked);
       }
     };
 
@@ -102,7 +112,7 @@ export default function Connections() {
         <section id="topbar">
           <i className="ph ph-files"></i>
           <Link to="/dashboard">{profile.username}'s Dashboard</Link>
-          <i class="ph ph-arrow-right"></i>
+          <i className="ph ph-arrow-right"></i>
           <Link to="/connections">Connections</Link>
         </section>
 
@@ -114,15 +124,26 @@ export default function Connections() {
                 <i className="ph ph-eye"></i> Stalking ({stalkedList.length})
               </span>
               {stalkedList.length > 0 ? (
-                <div className="avatar-grid">
+                <div className="connections-list">
                   {stalkedList.map(u => (
-                    <Link key={u.uuid} to={`/profile/${u.username}`} title={`@${u.username}`}>
-                      <img
+                    <div key={u.uuid} className="connections-row">
+                      <Link className="medium-avatar" to={`/profile/${u.username}`}><img
                         src={u.avatar_url || defaultAvatar}
                         alt={u.username}
-                        className="small-avatar"
-                      />
-                    </Link>
+                      /></Link>
+                      <div className="connections-info">
+                        <Link to={`/profile/${u.username}`}>
+                          {u.username}
+                        </Link>
+                        <span>
+                          Since{' '}
+                          {u.followedAt.slice(0, 10).replace(/-/g, '/')}
+                        </span>
+                      </div>
+                      <button className="remove-button">
+                        Remove
+                      </button>
+                    </div>
                   ))}
                 </div>
               ) : (
@@ -136,15 +157,26 @@ export default function Connections() {
                 <i className="ph ph-eye-closed"></i> Stalkers ({stalkersList.length})
               </span>
               {stalkersList.length > 0 ? (
-                <div className="avatar-grid">
+                <div className="connections-list">
                   {stalkersList.map(u => (
-                    <Link key={u.uuid} to={`/profile/${u.username}`} title={`@${u.username}`}>
-                      <img
+                    <div key={u.uuid} className="connections-row">
+                      <Link className="medium-avatar" to={`/profile/${u.username}`}><img
                         src={u.avatar_url || defaultAvatar}
                         alt={u.username}
-                        className="small-avatar"
-                      />
-                    </Link>
+                      /></Link>
+                      <div className="connections-info">
+                        <Link to={`/profile/${u.username}`}>
+                          {u.username}
+                        </Link>
+                        <span>
+                          Since{' '}
+                          {u.followedAt.slice(0, 10).replace(/-/g, '/')}
+                        </span>
+                      </div>
+                      <button className="remove-button">
+                        Remove
+                      </button>
+                    </div>
                   ))}
                 </div>
               ) : (
