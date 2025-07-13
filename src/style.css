@@ -44,6 +44,10 @@ a {
     transition: all 0.2s;
 }
 
+div#root {
+    display: flex;
+}
+
 /* left sidebar */
 
 #sidebar {
@@ -126,7 +130,7 @@ a {
 /* right content */
 
 #right-content {
-    width: 100%;
+    flex: 1;
 }
 
 #topbar {
