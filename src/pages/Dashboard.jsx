@@ -127,7 +127,7 @@ export default function Dashboard() {
                 <p>This user is not stalking anyone.</p>
               )}
               <div className="edit-section">
-                <Link to="/connections">Edit Stalking</Link>
+                <Link to="/connections">Edit</Link>
               </div>
             </div>
 
@@ -152,7 +152,7 @@ export default function Dashboard() {
                 <p>This user doesn’t have any stalkers.</p>
               )}
               <div className="edit-section">
-                <Link to="/connections">Edit Stalkers</Link>
+                <Link to="/connections">Edit</Link>
               </div>
             </div>
           </div>
