@@ -116,7 +116,7 @@ export default function Profile() {
     <div className="profile-layout">
       <section id="sidebar">
         <div className="bio-header">
-          <Link to="/dashboard" className="bio-avatar">
+          <Link to={`/profile/${profile.username}`} className="bio-avatar">
             <img
               src={profile.avatar_url || defaultAvatar}
               alt={`${profile.username}’s avatar`}
