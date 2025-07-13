@@ -39,17 +39,18 @@ export default function Profile() {
     load();
   }, [username]);
 
-  // Don't render until profile is loaded
   if (!profile) return null;
 
   const joinedDate = profile.created_at.slice(0, 10).replace(/-/g, '/');
+  const isOwn      = session?.user.id === profile.uuid;
+  const isAnon     = !session;
 
-  // Toggle stalk / unstalk
+  // toggles between stalking and unstalking
   const handleStalkToggle = async () => {
-    if (!session) return;
+    if (!session) return; // no-op for anon
 
     if (isStalking) {
-      // Unstalk
+      // unstalk
       const { error } = await supabase
         .from('Stalks')
         .delete()
@@ -57,32 +58,19 @@ export default function Profile() {
         .eq('stalked_id', profile.uuid);
       if (!error) setIsStalking(false);
     } else {
-      // Stalk
+      // stalk
       const { error } = await supabase
         .from('Stalks')
-        .insert({
-          stalker_id: session.user.id,
-          stalked_id: profile.uuid,
-        });
+        .insert({ stalker_id: session.user.id, stalked_id: profile.uuid });
       if (!error) setIsStalking(true);
     }
   };
 
-  const isOwn    = session?.user.id === profile.uuid;
-  const isAnon   = !session;
-  const disabled = isAnon || isOwn || false;  // only disable for anon & own
-  const label    = isStalking ? 'Already stalking' : 'Stalk';
-
-  // Pick the right class:
-  // - stalking → .button-clicked
-  // - anon or own → .button-unclickable
-  // - otherwise default
-  let btnClass = 'follow-button';
-  if (isStalking) {
-    btnClass += ' button-clicked';
-  } else if (isAnon || isOwn) {
-    btnClass += ' button-unclickable';
-  }
+  // determine button label & classes
+  const label   = isStalking ? 'Stalking' : 'Stalk';
+  let   btnCls  = 'follow-button';
+  if (isStalking)         btnCls += ' button-clicked';
+  else if (isAnon || isOwn) btnCls += ' button-unclickable';
 
   return (
     <section id="sidebar">
@@ -93,7 +81,6 @@ export default function Profile() {
             alt={`${profile.username}’s avatar`}
           />
         </Link>
-
         <div className="bio-info">
           <span className="bio-username">
             <Link to={`/profile/${profile.username}`}>
@@ -103,11 +90,10 @@ export default function Profile() {
           <span className="bio-join-date">
             Member since {joinedDate}
           </span>
-
           <button
-            className={btnClass}
+            className={btnCls}
             onClick={handleStalkToggle}
-            disabled={disabled}
+            disabled={isAnon || isOwn}
           >
             {label}
           </button>
