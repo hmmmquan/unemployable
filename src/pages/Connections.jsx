@@ -4,7 +4,7 @@ import { useNavigate, Link }   from 'react-router-dom';
 import { supabase }            from '../supabaseClient';
 import defaultAvatar           from '../assets/default avatar.jpg';
 
-export default function Dashboard() {
+export default function Connections() {
   const [profile,      setProfile]      = useState(null);
   const [stalkersList, setStalkersList] = useState([]);
   const [stalkedList,  setStalkedList]  = useState([]);
@@ -102,7 +102,7 @@ export default function Dashboard() {
         <section id="topbar">
           <i className="ph ph-files"></i>
           <Link to="/dashboard">{profile.username}'s Dashboard</Link>
-          <span>{'>'}</span>
+          <i class="ph ph-arrow-right"></i>
           <Link to="/connections">Connections</Link>
         </section>
 
@@ -128,9 +128,6 @@ export default function Dashboard() {
               ) : (
                 <p>This user is not stalking anyone.</p>
               )}
-              <div className="edit-section">
-                <Link to="/dashboard/connections">Edit Stalking</Link>
-              </div>
             </div>
 
             <div className="stalkers-section">
@@ -153,9 +150,6 @@ export default function Dashboard() {
               ) : (
                 <p>This user doesn’t have any stalkers.</p>
               )}
-              <div className="edit-section">
-                <Link to="/dashboard/connections">Edit Stalkers</Link>
-              </div>
             </div>
           </div>
         </section>

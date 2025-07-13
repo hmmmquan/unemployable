@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Profile    from './pages/Profile';
-import Profile    from './pages/Connections';
+import Connections    from './pages/Connections';
 import './style.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
