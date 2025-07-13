@@ -12,65 +12,64 @@ export default function Profile() {
   const [stalkersList, setStalkersList] = useState([]);
   const [stalkedList,  setStalkedList]  = useState([]);
 
-  useEffect(() => {
-    const load = async () => {
+  const load = async () => {
+    // clear out old data on every profile change
+    setStalkersList([]);
+    setStalkedList([]);
 
-      // clear out old data on every profile change
-      setStalkersList([]);
-      setStalkedList([]);
+    // Get session (may be null for anon)
+    const { data: { session } } = await supabase.auth.getSession();
+    setSession(session);
 
-      // Get session (may be null for anon)
-      const { data: { session } } = await supabase.auth.getSession();
-      setSession(session);
+    // Fetch profile by username
+    const { data: prof, error: profErr } = await supabase
+      .from('Users')
+      .select('uuid, username, avatar_url, created_at')
+      .eq('username', username)
+      .single();
+    if (profErr || !prof) return;
+    setProfile(prof);
 
-      // Fetch profile by username
-      const { data: prof, error: profErr } = await supabase
-        .from('Users')
-        .select('uuid, username, avatar_url, created_at')
-        .eq('username', username)
-        .single();
-      if (profErr || !prof) return;
-      setProfile(prof);
-
-      // If signed in, check stalking status
-      if (session) {
-        const { count } = await supabase
-          .from('Stalks')
-          .select('*', { head: true, count: 'exact' })
-          .eq('stalker_id', session.user.id)
-          .eq('stalked_id', prof.uuid);
-        setIsStalking(count > 0);
-      }
-
-      // Load stalkers (who follow this profile)
-      const { data: sRows } = await supabase
+    // If signed in, check stalking status
+    if (session) {
+      const { count } = await supabase
         .from('Stalks')
-        .select('stalker_id')
+        .select('*', { head: true, count: 'exact' })
+        .eq('stalker_id', session.user.id)
         .eq('stalked_id', prof.uuid);
-      const stalkerIds = sRows.map(r => r.stalker_id);
-      if (stalkerIds.length > 0) {
-        const { data: stalkers } = await supabase
-          .from('Users')
-          .select('uuid, username, avatar_url')
-          .in('uuid', stalkerIds);
-        setStalkersList(stalkers);
-      }
+      setIsStalking(count > 0);
+    }
 
-      // Load stalked (who this profile is stalking)
-      const { data: dRows } = await supabase
-        .from('Stalks')
-        .select('stalked_id')
-        .eq('stalker_id', prof.uuid);
-      const stalkedIds = dRows.map(r => r.stalked_id);
-      if (stalkedIds.length > 0) {
-        const { data: stalked } = await supabase
-          .from('Users')
-          .select('uuid, username, avatar_url')
-          .in('uuid', stalkedIds);
-        setStalkedList(stalked);
-      }
-    };
+    // Load stalkers (who follow this profile)
+    const { data: sRows } = await supabase
+      .from('Stalks')
+      .select('stalker_id')
+      .eq('stalked_id', prof.uuid);
+    const stalkerIds = sRows.map(r => r.stalker_id);
+    if (stalkerIds.length > 0) {
+      const { data: stalkers } = await supabase
+        .from('Users')
+        .select('uuid, username, avatar_url')
+        .in('uuid', stalkerIds);
+      setStalkersList(stalkers);
+    }
 
+    // Load stalked (who this profile is stalking)
+    const { data: dRows } = await supabase
+      .from('Stalks')
+      .select('stalked_id')
+      .eq('stalker_id', prof.uuid);
+    const stalkedIds = dRows.map(r => r.stalked_id);
+    if (stalkedIds.length > 0) {
+      const { data: stalked } = await supabase
+        .from('Users')
+        .select('uuid, username, avatar_url')
+        .in('uuid', stalkedIds);
+      setStalkedList(stalked);
+    }
+  };
+
+  useEffect(() => {
     load();
   }, [username]);
 
@@ -109,7 +108,7 @@ export default function Profile() {
 
   // Determine button label & classes
   const label = isStalking ? 'Stalking' : 'Stalk';
-  let btnCls  = 'follow-button';
+  let btnCls = 'follow-button';
   if (isStalking)           btnCls += ' button-clicked';
   else if (isAnon || isOwn) btnCls += ' button-unclickable';
 
@@ -132,9 +131,10 @@ export default function Profile() {
             <span className="bio-join-date">
               Member since {joinedDate}
             </span>
-            
             {isOwn ? (
-              <Link to="/dashboard" className="view-public-profile-button">Go to Dashboard</Link>
+              <Link to="/dashboard" className="view-public-profile-button">
+                Go to Dashboard
+              </Link>
             ) : (
               <button
                 className={btnCls}
@@ -144,7 +144,6 @@ export default function Profile() {
                 {label}
               </button>
             )}
-            
           </div>
         </div>
       </section>
@@ -160,11 +159,17 @@ export default function Profile() {
         <section id="main-content">
           <div className="stalker-stalked">
             <div className="stalked-section">
-              <span className="section-title"><i class="ph ph-eye"></i> Stalking ({stalkedList.length})</span>
+              <span className="section-title">
+                <i className="ph ph-eye"></i> Stalking ({stalkedList.length})
+              </span>
               {stalkedList.length > 0 ? (
                 <div className="avatar-grid">
                   {stalkedList.map(u => (
-                    <Link key={u.uuid} to={`/profile/${u.username}`} title={`${u.username}`}>
+                    <Link
+                      key={u.uuid}
+                      to={`/profile/${u.username}`}
+                      title={`${u.username}`}
+                    >
                       <img
                         src={u.avatar_url || defaultAvatar}
                         alt={u.username}
@@ -174,16 +179,22 @@ export default function Profile() {
                   ))}
                 </div>
               ) : (
-                  <p>This user is not stalking anyone.</p>
+                <p>This user is not stalking anyone</p>
               )}
             </div>
 
             <div className="stalkers-section">
-              <span className="section-title"><i class="ph ph-eye-closed"></i> Stalkers ({stalkersList.length})</span>
+              <span className="section-title">
+                <i className="ph ph-eye-closed"></i> Stalkers ({stalkersList.length})
+              </span>
               {stalkersList.length > 0 ? (
                 <div className="avatar-grid">
                   {stalkersList.map(u => (
-                    <Link key={u.uuid} to={`/profile/${u.username}`} title={`${u.username}`}>
+                    <Link
+                      key={u.uuid}
+                      to={`/profile/${u.username}`}
+                      title={`${u.username}`}
+                    >
                       <img
                         src={u.avatar_url || defaultAvatar}
                         alt={u.username}
@@ -193,7 +204,7 @@ export default function Profile() {
                   ))}
                 </div>
               ) : (
-                <p>This user doesn’t have any stalkers.</p>
+                <p>This user doesn’t have any stalkers</p>
               )}
             </div>
           </div>
