@@ -14,6 +14,11 @@ export default function Profile() {
 
   useEffect(() => {
     const load = async () => {
+
+      // clear out old data on every profile change
+      setStalkersList([]);
+      setStalkedList([]);
+
       // Get session (may be null for anon)
       const { data: { session } } = await supabase.auth.getSession();
       setSession(session);
