@@ -7,6 +7,7 @@
     --main-font-weight: 400;
     --main-link-color: #000000;
     --main-link-font-weight: 500;
+    --main-border-color: #dddddd;
 
     --headline-font-size: 20px;
     --headline-font-weight: 600;
@@ -196,8 +197,13 @@ a {
 .connections-row {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 20px;
     width: 100%;
+}
+
+.connections-list > .connections-row:not(:last-child) {
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--main-border-color);
 }
 
 .connections-info {
