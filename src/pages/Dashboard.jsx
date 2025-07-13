@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link }   from 'react-router-dom';
 import { supabase }            from '../supabaseClient';
+import defaultAvatar             from '../assets/default avatar.jpg';
 
 export default function Dashboard() {
   const [profile, setProfile] = useState(null);
@@ -47,7 +48,7 @@ export default function Dashboard() {
       <div className="bio-header">
         <Link to="/dashboard" className="bio-avatar">
           <img
-            src={profile.avatar_url || '/src/assets/default avatar.jpg'}
+            src={profile.avatar_url || defaultAvatar}
             alt={`${profile.username}’s avatar`}
           />
         </Link>

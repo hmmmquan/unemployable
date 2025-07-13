@@ -17,6 +17,8 @@
 
     --button-background-color: #0042ac;
     --button-font-color: #ffffff;
+    --button-unclickable-background-color: #4c4c4c;
+    --button-clicked-background-color: #00ac25;
 }
 
 * {
@@ -97,4 +99,23 @@ a {
     text-align: center;
     padding: 3px 5px;
     border-radius: 5px;
+}
+
+.follow-button {
+    background-color: var(--button-background-color);
+    color: var(--button-font-color)!important;
+    padding: 3px 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.button-unclickable {
+    background-color: var(--button-unclickable-background-color);
+    color: var(--sidebar-font-color)!important;
+    cursor: default!important;
+}
+
+.button-clicked {
+    background-color: var(--button-clicked-background-color);
 }

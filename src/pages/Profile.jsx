@@ -1,8 +1,8 @@
 // src/pages/Profile.jsx
-import { useState, useEffect }   from 'react';
-import { useParams, Link }       from 'react-router-dom';
-import { supabase }              from '../supabaseClient';
-import defaultAvatar             from '../assets/default avatar.jpg';
+import { useState, useEffect } from 'react';
+import { useParams, Link }     from 'react-router-dom';
+import { supabase }            from '../supabaseClient';
+import defaultAvatar           from '../assets/default avatar.jpg';
 
 export default function Profile() {
   const { username } = useParams();
@@ -39,8 +39,8 @@ export default function Profile() {
     load();
   }, [username]);
 
-  // Don't load anything if profile is not fully loaded
-  if (!profile) return null;  
+  // Don't render until profile is loaded
+  if (!profile) return null;
 
   const joinedDate = profile.created_at.slice(0, 10).replace(/-/g, '/');
 
@@ -55,12 +55,23 @@ export default function Profile() {
     if (!error) setIsStalking(true);
   };
 
-  const isOwn = session?.user.id === profile.uuid;
+  const isOwn    = session?.user.id === profile.uuid;
+  const isAnon   = !session;
+  const disabled = isAnon || isOwn || isStalking;
+  const label    = isStalking ? 'Already stalking' : 'Stalk';
+
+  // build the className based on state
+  let btnClass = 'follow-button';
+  if (isStalking) {
+    btnClass += ' button-clicked';
+  } else if (isAnon || isOwn) {
+    btnClass += ' button-unclickable';
+  }
 
   return (
     <section id="sidebar">
       <div className="bio-header">
-        <Link to="/dashboard" className="bio-avatar">
+        <Link to={`/profile/${profile.username}`} className="bio-avatar">
           <img
             src={profile.avatar_url || defaultAvatar}
             alt={`${profile.username}’s avatar`}
@@ -68,23 +79,16 @@ export default function Profile() {
         </Link>
 
         <div className="bio-info">
-          <span className="bio-username">@{profile.username}</span>
+          <span className="bio-username"><Link to={`/profile/${profile.username}`}>@{profile.username}</Link></span>
           <span className="bio-join-date">Member since {joinedDate}</span>
 
-          {/* only show button if signed in and not your own profile */}
-          {session && !isOwn && (
-            <button
-              className="follow-button"
-              onClick={handleStalk}
-              disabled={isStalking}
-              style={{
-                opacity:    isStalking ? 0.5 : 1,
-                cursor:     isStalking ? 'not-allowed' : 'pointer',
-              }}
-            >
-              {isStalking ? 'Stalked' : 'Stalk'}
-            </button>
-          )}
+          <button
+            className={btnClass}
+            onClick={handleStalk}
+            disabled={disabled}
+          >
+            {label}
+          </button>
         </div>
       </div>
     </section>
