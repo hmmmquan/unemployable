@@ -121,13 +121,19 @@ export default function Profile() {
             <span className="bio-join-date">
               Member since {joinedDate}
             </span>
-            <button
-              className={btnCls}
-              onClick={handleStalkToggle}
-              disabled={isAnon || isOwn}
-            >
-              {label}
-            </button>
+            
+            {isOwn ? (
+              <Link to="/dashboard" className="follow-button">Go to Dashboard</Link>
+            ) : (
+              <button
+                className={btnCls}
+                onClick={handleStalkToggle}
+                disabled={isAnon}
+              >
+                {label}
+              </button>
+            )}
+            
           </div>
         </div>
       </section>
