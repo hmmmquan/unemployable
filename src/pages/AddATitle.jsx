@@ -83,7 +83,7 @@ export default function AddATitle() {
     if (error) {
       setSubmitError(error.message);
     } else {
-      const newId = data[0].id;
+      const newShortId = data[0].short_id;
       navigate(`/title/${newShortId}`, { replace: true });
     }
   };
