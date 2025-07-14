@@ -370,6 +370,10 @@ a {
     border: 1px solid var(--main-accent-border-color);
 }
 
+.form-group textarea {
+    resize: none;
+}
+
 .create-title-button {
     width: fit-content;
     background-color: var(--button-background-color);
