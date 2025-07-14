@@ -202,7 +202,7 @@ export default function AddATitle() {
                       required
                     />
                     <span>
-                      If the romanji title is as popular as the English title, use romanji (e.g. Shingeki no Kyojin).
+                      If the romanji title is as popular as the English title, use romanji (e.g. Shingeki no Kyojin, not Attack on Titan)
                     </span>
                   </div>
 
@@ -223,7 +223,7 @@ export default function AddATitle() {
                       onChange={e => setCoverUrl(e.target.value)}
                     />
                     <span>
-                      Enter a valid URL. If the image is wider than it is tall, it will auto-rotate.
+                      Enter a valid URL. If the image is wider than it is tall, it will auto-rotate
                     </span>
                   </div>
 
