@@ -72,22 +72,19 @@ export default function AddATitle() {
       cover_image_url:  coverUrl,
       release_date:     releaseDate || null,
       end_date:         endDate || null,
-      // if you have a `created_by` column with default = auth.uid(), you don't need to add it here
-      // otherwise uncomment the next line:
-      // created_by:       profile.uuid,
     };
 
-    // ask Supabase to INSERT and return the new row's id
+    // Ask Supabase to INSERT and return the new row's id
     const { data, error } = await supabase
       .from('titles')
       .insert([payload])
-      .select('id');
+      .select('short_id');
 
     if (error) {
       setSubmitError(error.message);
     } else {
       const newId = data[0].id;
-      navigate(`/title/${newId}`, { replace: true });
+      navigate(`/title/${newShortId}`, { replace: true });
     }
   };
 
