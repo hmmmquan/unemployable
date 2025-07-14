@@ -141,6 +141,37 @@ a {
     background-color: var(--button-clicked-background-color);
 }
 
+.bio-nav {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+}
+
+.bio-nav a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--sidebar-font-color)!important;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.bio-nav .nav-label {
+    flex: 1;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.bio-nav ph {
+    color: var(--sidebar-font-color);
+}
+
+.bio-nav a:hover {
+    background-color: var(--sidebar-accent-background-color);
+    color: var(--sidebar-link-color)!important;
+}
+
 /* right content */
 
 #right-content {

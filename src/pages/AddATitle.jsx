@@ -74,7 +74,7 @@ export default function AddATitle() {
       end_date:         endDate || null,
     };
 
-    // Ask Supabase to INSERT and return the new row's id
+    // ask Supabase to INSERT and return the new row's id
     const { data, error } = await supabase
       .from('titles')
       .insert([payload])
@@ -83,8 +83,8 @@ export default function AddATitle() {
     if (error) {
       setSubmitError(error.message);
     } else {
-      const newShortId = data[0].short_id;
-      navigate(`/title/${newShortId}`, { replace: true });
+      const newId = data[0].short_id;
+      navigate(`/title/${newId}`, { replace: true });
     }
   };
 
@@ -115,6 +115,9 @@ export default function AddATitle() {
               View Public Profile
             </Link>
           </div>
+        </div>
+        <div className="bio-nav">
+          <Link to="/addatitle"><i class="ph ph-hard-drives"></i> <span class="nav-label">Add A Title</span></Link>
         </div>
       </section>
 
