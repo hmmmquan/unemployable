@@ -179,7 +179,7 @@ export default function Profile() {
                   ))}
                 </div>
               ) : (
-                <p>This user is not stalking anyone</p>
+                <p>This user is not stalking anyone.</p>
               )}
             </div>
 
@@ -204,7 +204,7 @@ export default function Profile() {
                   ))}
                 </div>
               ) : (
-                <p>This user doesn’t have any stalkers</p>
+                <p>This user doesn’t have any stalkers.</p>
               )}
             </div>
           </div>

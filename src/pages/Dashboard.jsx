@@ -108,7 +108,6 @@ export default function Dashboard() {
           <div className="stalker-stalked">
             <div className="stalked-section">
               <span className="section-title">
-                {/* Stalking (who I’m following) */}
                 <i className="ph ph-eye"></i> Stalking ({stalkedList.length})
               </span>
               {stalkedList.length > 0 ? (
@@ -133,7 +132,6 @@ export default function Dashboard() {
 
             <div className="stalkers-section">
               <span className="section-title">
-                {/* Stalkers (who follow me) */}
                 <i className="ph ph-eye-closed"></i> Stalkers ({stalkersList.length})
               </span>
               {stalkersList.length > 0 ? (

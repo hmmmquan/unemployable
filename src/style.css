@@ -8,6 +8,11 @@
     --main-link-color: #000000;
     --main-link-font-weight: 500;
     --main-border-color: #dddddd;
+    --main-accent-border-color: #222222;
+
+    --label-font-size: 16px;
+    --label-font-weight: 500;
+    --label-font-color: #000000;
 
     --headline-font-size: 20px;
     --headline-font-weight: 600;
@@ -27,6 +32,7 @@
     --topbar-font-color: #000000;
 
     --box-background-color: #ffffff;
+    --box-accent-background-color: #f3f3f3;
     --box-shadow: 0px 1px 4px -1px #dddddd;
 }
 
@@ -95,17 +101,17 @@ a {
 }
 
 .bio-info {
-  flex: 1;       
-  min-width: 0;  
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+    flex: 1;       
+    min-width: 0;  
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
 .bio-username {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .view-public-profile-button {
@@ -159,7 +165,7 @@ a {
     display: flex;
     flex-direction: column;
     gap: 100px;
-    margin: 50px 50px 0 50px;
+    margin: 50px;
 } 
 
 .stalker-stalked {
@@ -253,6 +259,92 @@ a {
     color: var(--button-font-color)!important;
     margin-left: auto;
     padding: 5px 30px;
+    font-weight: var(--main-link-font-weight);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* add a title */
+
+.add-title-container {
+    flex: 1;
+    background-color: var(--box-background-color);
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: var(--box-shadow);
+}
+
+.add-title-form .form-layout {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    margin-top: 10px;
+}
+
+.add-title-form .preview-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 300px;
+    height: 450px;
+    background-color: var(--box-accent-background-color);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.add-title-form .preview-box img {
+    height: 450px;
+    object-fit: cover;
+}
+
+.add-title-form .preview-box img.rotated {
+    transform: rotate(-90deg);
+    height: 300px;
+}
+
+.add-title-form .form-fields {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.add-title-form .form-group {
+    flex: 1;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+}
+
+.add-title-form .form-row-two {
+  display: flex;
+  gap: 20px;
+}
+
+.form-group label {
+    color: var(--label-font-color);
+    font-size: var(--label-font-size);
+    font-weight: var(--label-font-weight);
+}
+
+.form-group select, .form-group input, .form-group textarea {
+    padding: 10px;
+    border: 1px solid var(--main-border-color);
+    border-radius: 5px;
+    outline: none;
+}
+
+.form-group select:focus, .form-group input:focus, .form-group textarea:focus {
+    border: 1px solid var(--main-accent-border-color);
+}
+
+.create-title-button {
+    width: fit-content;
+    background-color: var(--button-background-color);
+    color: var(--button-font-color)!important;
+    padding: 15px 30px;
+    font-weight: var(--main-link-font-weight);
     border: none;
     border-radius: 5px;
     cursor: pointer;
