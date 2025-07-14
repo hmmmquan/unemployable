@@ -97,6 +97,7 @@ export default function Dashboard() {
           </div>
         </div>
         <div className="bio-nav">
+          <Link to="/dashboard"><i class="ph ph-hard-files"></i> <span class="nav-label">Dashboard</span></Link>
           <Link to="/addatitle"><i class="ph ph-hard-drives"></i> <span class="nav-label">Add A Title</span></Link>
         </div>
       </section>
