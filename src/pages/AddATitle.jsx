@@ -42,6 +42,7 @@ export default function AddATitle() {
       // Redirect on any error
       if (error || !data) return navigate('/', { replace: true });
       setProfile(data);
+
     };
     load();
   }, [navigate]);
@@ -63,24 +64,30 @@ export default function AddATitle() {
     setSubmitError('');
 
     const payload = {
-      media_type:     mediaType,
-      native_title:   nativeTitle,
-      known_as:       knownAs,
+      type:             mediaType,
+      native_title:     nativeTitle,
+      known_as:         knownAs,
       synopsis,
       status,
-      cover_url:      coverUrl,
-      release_date:   releaseDate || null,
-      end_date:       endDate || null,
+      cover_image_url:  coverUrl,
+      release_date:     releaseDate || null,
+      end_date:         endDate || null,
+      // if you have a `created_by` column with default = auth.uid(), you don't need to add it here
+      // otherwise uncomment the next line:
+      // created_by:       profile.uuid,
     };
 
+    // ask Supabase to INSERT and return the new row's id
     const { data, error } = await supabase
       .from('titles')
-      .insert([payload]);
+      .insert([payload])
+      .select('id');
 
     if (error) {
       setSubmitError(error.message);
     } else {
-      navigate('/dashboard', { replace: true });
+      const newId = data[0].id;
+      navigate(`/title/${newId}`, { replace: true });
     }
   };
 

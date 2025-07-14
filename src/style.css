@@ -349,3 +349,7 @@ a {
     border-radius: 5px;
     cursor: pointer;
 }
+
+.form-error {
+    color: red;
+}
