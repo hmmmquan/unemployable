@@ -227,23 +227,27 @@ export default function AddATitle() {
                     </span>
                   </div>
 
-                  <div className="form-group">
-                    <label>Release Date</label>
-                    <input
-                      type="date"
-                      value={releaseDate}
-                      onChange={e => setReleaseDate(e.target.value)}
-                    />
-                  </div>
+                  <div className="form-row-two">
 
-                  <div className="form-group">
-                    <label>End Date</label>
-                    <input
-                      type="date"
-                      value={endDate}
-                      onChange={e => setEndDate(e.target.value)}
-                    />
-                    <span>If unknown, leave blank</span>
+                    <div className="form-group">
+                      <label>Release Date</label>
+                      <input
+                        type="date"
+                        value={releaseDate}
+                        onChange={e => setReleaseDate(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>End Date</label>
+                      <input
+                        type="date"
+                        value={endDate}
+                        onChange={e => setEndDate(e.target.value)}
+                      />
+                      <span>If unknown, leave blank</span>
+                    </div>
+                  
                   </div>
 
                   {submitError && (
