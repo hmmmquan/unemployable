@@ -23,7 +23,7 @@ export default function Profile() {
 
     // Fetch profile by username
     const { data: prof, error: profErr } = await supabase
-      .from('Users')
+      .from('users')
       .select('uuid, username, avatar_url, created_at')
       .eq('username', username)
       .single();
@@ -33,7 +33,7 @@ export default function Profile() {
     // If signed in, check stalking status
     if (session) {
       const { count } = await supabase
-        .from('Stalks')
+        .from('stalks')
         .select('*', { head: true, count: 'exact' })
         .eq('stalker_id', session.user.id)
         .eq('stalked_id', prof.uuid);
@@ -42,13 +42,13 @@ export default function Profile() {
 
     // Load stalkers (who follow this profile)
     const { data: sRows } = await supabase
-      .from('Stalks')
+      .from('stalks')
       .select('stalker_id')
       .eq('stalked_id', prof.uuid);
     const stalkerIds = sRows.map(r => r.stalker_id);
     if (stalkerIds.length > 0) {
       const { data: stalkers } = await supabase
-        .from('Users')
+        .from('users')
         .select('uuid, username, avatar_url')
         .in('uuid', stalkerIds);
       setStalkersList(stalkers);
@@ -56,13 +56,13 @@ export default function Profile() {
 
     // Load stalked (who this profile is stalking)
     const { data: dRows } = await supabase
-      .from('Stalks')
+      .from('stalks')
       .select('stalked_id')
       .eq('stalker_id', prof.uuid);
     const stalkedIds = dRows.map(r => r.stalked_id);
     if (stalkedIds.length > 0) {
       const { data: stalked } = await supabase
-        .from('Users')
+        .from('users')
         .select('uuid, username, avatar_url')
         .in('uuid', stalkedIds);
       setStalkedList(stalked);
@@ -86,7 +86,7 @@ export default function Profile() {
     if (isStalking) {
       // Unstalk
       const { error } = await supabase
-        .from('Stalks')
+        .from('stalks')
         .delete()
         .eq('stalker_id', session.user.id)
         .eq('stalked_id', profile.uuid);
@@ -97,7 +97,7 @@ export default function Profile() {
     } else {
       // Stalk
       const { error } = await supabase
-        .from('Stalks')
+        .from('stalks')
         .insert({ stalker_id: session.user.id, stalked_id: profile.uuid });
       if (!error) {
         setIsStalking(true);

@@ -34,7 +34,7 @@ export default function AddATitle() {
 
       // Fetch profile using uuid
       const { data, error } = await supabase
-        .from('Users')
+        .from('users')
         .select('uuid, username, avatar_url, created_at')
         .eq('uuid', session.user.id)
         .single();
@@ -51,6 +51,8 @@ export default function AddATitle() {
   if (!profile) return null;
 
   const joinedDate = profile.created_at.slice(0,10).replace(/-/g,'/');
+
+  const userId     = profile.uuid;
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -77,6 +79,8 @@ export default function AddATitle() {
     e.preventDefault();
     setSubmitError('');
 
+    const now = new Date().toISOString();
+
     const payload = {
       type:             mediaType,
       native_title:     nativeTitle,
@@ -88,9 +92,13 @@ export default function AddATitle() {
       end_date:         ['Film','Book','Song','Album','TV_Segment'].includes(mediaType)
                           ? null
                           : endDate || null,
+      created_by:       userId,
+      last_updated_by:  userId,
+      created_at:       now,
+      updated_at:       now,
     };
 
-    // 1) insert into titles, returning both id and short_id
+    // Insert into titles, returning both id and short_id
     const { data, error } = await supabase
       .from('titles')
       .insert([payload])
@@ -104,7 +112,7 @@ export default function AddATitle() {
     const newUuid  = data[0].id;
     const newShort = data[0].short_id;
 
-    // 2) insert into the matching subtype table
+    // Insert into the matching subtype table
     try {
       switch(mediaType) {
         case 'Film':
@@ -137,6 +145,9 @@ export default function AddATitle() {
         case 'TV_Segment':
           await supabase.from('tv_segments').insert({ title_id: newUuid, duration: '00:00:00' });
           break;
+        case 'Stage_Play':
+          await supabase.from('stage_plays').insert({ title_id: newUuid, total_duration: '00:00:00' });
+          break;
         default:
           break;
       }
@@ -144,21 +155,22 @@ export default function AddATitle() {
       console.error('Subtype insert error:', subError);
     }
 
-    // finally navigate to the new title page
+    // Navigate to the new title page
     navigate(`/title/${newShort}`, { replace: true });
   };
 
   const mediaTypes = [
     'Film',
-    'TV_Show',
     'Drama',
     'Special',
-    'Short',
     'Manga',
     'Book',
     'Album',
     'Song',
-    'TV_Segment'
+    'TV_Show',
+    'TV_Segment',
+    'Short',
+    'Stage_Play'
   ];
   const statuses   = [
     'Unconfirmed',

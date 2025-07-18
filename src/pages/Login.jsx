@@ -27,7 +27,7 @@ export default function Login() {
 
     // Lookup the real email for this username
     const { data: usr, error: lookupErr } = await supabase
-      .from('Users')
+      .from('users')
       .select('email')
       .eq('username', username.trim())
       .single();

@@ -21,7 +21,7 @@ export default function Dashboard() {
 
       // Fetch profile using uuid
       const { data, error } = await supabase
-        .from('Users')
+        .from('users')
         .select('uuid, username, avatar_url, created_at')
         .eq('uuid', session.user.id)
         .single();
@@ -33,13 +33,13 @@ export default function Dashboard() {
 
       // Load stalkers (who follow me)
       const { data: sRows } = await supabase
-        .from('Stalks')
+        .from('stalks')
         .select('stalker_id')
         .eq('stalked_id', data.uuid);
       const stalkerIds = sRows.map(r => r.stalker_id);
       if (stalkerIds.length > 0) {
         const { data: stalkers } = await supabase
-          .from('Users')
+          .from('users')
           .select('uuid, username, avatar_url')
           .in('uuid', stalkerIds);
         setStalkersList(stalkers);
@@ -47,13 +47,13 @@ export default function Dashboard() {
 
       // Load stalked (who I am stalking)
       const { data: dRows } = await supabase
-        .from('Stalks')
+        .from('stalks')
         .select('stalked_id')
         .eq('stalker_id', data.uuid);
       const stalkedIds = dRows.map(r => r.stalked_id);
       if (stalkedIds.length > 0) {
         const { data: stalked } = await supabase
-          .from('Users')
+          .from('users')
           .select('uuid, username, avatar_url')
           .in('uuid', stalkedIds);
         setStalkedList(stalked);

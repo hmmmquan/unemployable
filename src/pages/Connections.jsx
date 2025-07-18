@@ -20,7 +20,7 @@ export default function Connections() {
 
     // Fetch profile using uuid
     const { data, error } = await supabase
-      .from('Users')
+      .from('users')
       .select('uuid, username, avatar_url, created_at')
       .eq('uuid', session.user.id)
       .single();
@@ -32,13 +32,13 @@ export default function Connections() {
 
     // Load stalkers (who follow me)
     const { data: sRows } = await supabase
-      .from('Stalks')
+      .from('stalks')
       .select('stalker_id, created_at')
       .eq('stalked_id', data.uuid);
     const stalkerIds = sRows.map(r => r.stalker_id);
     if (stalkerIds.length > 0) {
       const { data: stalkers } = await supabase
-        .from('Users')
+        .from('users')
         .select('uuid, username, avatar_url')
         .in('uuid', stalkerIds);
       // attach the timestamp
@@ -53,13 +53,13 @@ export default function Connections() {
 
     // Load stalked (who I am stalking)
     const { data: dRows } = await supabase
-      .from('Stalks')
+      .from('stalks')
       .select('stalked_id, created_at')
       .eq('stalker_id', data.uuid);
     const stalkedIds = dRows.map(r => r.stalked_id);
     if (stalkedIds.length > 0) {
       const { data: stalked } = await supabase
-        .from('Users')
+        .from('users')
         .select('uuid, username, avatar_url')
         .in('uuid', stalkedIds);
       // attach the timestamp
@@ -92,14 +92,14 @@ export default function Connections() {
     if (type === 'stalked') {
       // remove from "stalked" list: delete where I am stalker
       await supabase
-        .from('Stalks')
+        .from('stalks')
         .delete()
         .eq('stalker_id', profile.uuid)
         .eq('stalked_id', uuid);
     } else {
       // remove from "stalkers" list: delete where they are stalker
       await supabase
-        .from('Stalks')
+        .from('stalks')
         .delete()
         .eq('stalker_id', uuid)
         .eq('stalked_id', profile.uuid);
