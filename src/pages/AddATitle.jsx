@@ -68,10 +68,16 @@ export default function AddATitle() {
     }
   };
 
-  // Rotate image if width is > height
+  // Rotate image if width is > height, but never for Album or Song
   const handleImageLoad = () => {
     const img = imgRef.current;
-    if (img) setRotateImg(img.naturalWidth > img.naturalHeight);
+    if (img) {
+      if (['Album','Song'].includes(mediaType)) {
+        setRotateImg(false);
+      } else {
+        setRotateImg(img.naturalWidth > img.naturalHeight);
+      }
+    }
   };
 
   // Insert into title table and matching subtype table
