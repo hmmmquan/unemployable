@@ -59,12 +59,19 @@ export default function AddATitle() {
     navigate('/', { replace: true });
   };
 
-  // Clear end date field if the user picks film, book, song, album or tv segment
+  // Clear end date field and rotation state
   const handleMediaTypeChange = e => {
     const type = e.target.value;
     setMediaType(type);
+    // Clear end date for certain types
     if (['Film','Book','Song','Album','TV_Segment'].includes(type)) {
       setEndDate('');
+    }
+    // Disable rotation when switching to Album or Song, otherwise update rotation
+    if (['Album','Song'].includes(type)) {
+      setRotateImg(false);
+    } else if (imgRef.current) {
+      handleImageLoad();
     }
   };
 
