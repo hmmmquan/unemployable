@@ -52,6 +52,11 @@ export default function AddATitle() {
 
   const joinedDate = profile.created_at.slice(0,10).replace(/-/g,'/');
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/', { replace: true });
+  };
+
   // Clear end date field if the user picks film or book
   const handleMediaTypeChange = e => {
     const type = e.target.value;
@@ -60,7 +65,6 @@ export default function AddATitle() {
       setEndDate('');
     }
   };
-
 
   // Rotate image if width is > height
   const handleImageLoad = () => {
