@@ -1,5 +1,5 @@
 // src/pages/Dashboard.jsx
-import { useState }    from 'react';
+import { useState, useEffect }    from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase }    from '../supabaseClient';
 
@@ -8,6 +8,13 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error,    setError]    = useState('');
   const navigate = useNavigate();
+
+  // If already logged in, redirect to dashboard
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) navigate('/dashboard', { replace: true });
+    });
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

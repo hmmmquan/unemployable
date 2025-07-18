@@ -172,6 +172,26 @@ a {
     color: var(--sidebar-link-color)!important;
 }
 
+.bio-nav .nav-link-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: none;
+    color: var(--sidebar-font-color)!important;
+    padding: 10px;
+    cursor: pointer;
+    font: inherit;              
+    text-align: left;         
+    border: none;
+    border-radius: 5px;  
+    transition: all 0.2s;
+}
+
+.bio-nav .nav-link-button:hover {
+    background-color: var(--sidebar-accent-background-color);
+    color: var(--sidebar-link-color)!important;
+}
+
 /* right content */
 
 #right-content {
