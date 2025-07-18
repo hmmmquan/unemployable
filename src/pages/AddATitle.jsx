@@ -82,7 +82,7 @@ export default function AddATitle() {
       if (['Album','Song'].includes(mediaType)) {
         setRotateImg(false);
       } else {
-        setRotateImg(img.naturalWidth > img.naturalHeight);
+        setRotateImg(img.naturalWidth / img.naturalHeight >= 1.5);
       }
     }
   };
