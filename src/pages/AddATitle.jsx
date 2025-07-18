@@ -52,6 +52,16 @@ export default function AddATitle() {
 
   const joinedDate = profile.created_at.slice(0,10).replace(/-/g,'/');
 
+  // Clear end date field if the user picks film or book
+  const handleMediaTypeChange = e => {
+    const type = e.target.value;
+    setMediaType(type);
+    if (type === 'Film' || type === 'Book') {
+      setEndDate('');
+    }
+  };
+
+
   // Rotate image if width is > height
   const handleImageLoad = () => {
     const img = imgRef.current;
@@ -71,10 +81,10 @@ export default function AddATitle() {
       status,
       cover_image_url:  coverUrl,
       release_date:     releaseDate || null,
-      end_date:         endDate || null,
+      end_date: mediaType === 'Film' || mediaType === 'Book' ? null : endDate || null,
     };
 
-    // ask Supabase to INSERT and return the new row's id
+    // Ask Supabase to INSERT and return the new row's id
     const { data, error } = await supabase
       .from('titles')
       .insert([payload])
@@ -118,7 +128,7 @@ export default function AddATitle() {
         </div>
         <div className="bio-nav">
           <Link to="/dashboard"><i class="ph ph-files"></i> <span class="nav-label">Dashboard</span></Link>
-          <Link to="/addatitle"><i class="ph ph-hard-drives"></i> <span class="nav-label">Add A Title</span></Link>
+          <Link to="/title/add"><i class="ph ph-hard-drives"></i> <span class="nav-label">Add A Title</span></Link>
         </div>
       </section>
 
@@ -127,7 +137,7 @@ export default function AddATitle() {
           <i className="ph ph-files"></i>
           <Link to="/dashboard">{profile.username}'s Dashboard</Link>
           <i className="ph ph-arrow-right"></i>
-          <Link to="/addatitle">Add A Title</Link>
+          <Link to="/title/add">Add A Title</Link>
         </section>
 
         <section id="main-content">
@@ -158,7 +168,7 @@ export default function AddATitle() {
                       <label>Media Type</label>
                       <select
                         value={mediaType}
-                        onChange={e => setMediaType(e.target.value)}
+                        onChange={handleMediaTypeChange}
                       >
                         {mediaTypes.map(t => (
                           <option key={t} value={t}>
@@ -244,8 +254,9 @@ export default function AddATitle() {
                         type="date"
                         value={endDate}
                         onChange={e => setEndDate(e.target.value)}
+                        disabled={mediaType === 'Film' || mediaType === 'Book'}
                       />
-                      <span>If unknown, leave blank</span>
+                      <span>If unknown, leave blank. Disabled for films and books by default.</span>
                     </div>
                   
                   </div>
