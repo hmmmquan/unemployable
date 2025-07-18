@@ -59,13 +59,6 @@ export default function AddATitle() {
     navigate('/', { replace: true });
   };
 
-  // Re-run rotation check when mediaType changes back to a rotatable type
-  useEffect(() => {
-    if (!['Album','Song'].includes(mediaType) && imgRef.current) {
-      handleImageLoad();
-    }
-  }, [mediaType]);
-
   // Clear end date field and rotation state
   const handleMediaTypeChange = e => {
     const type = e.target.value;
