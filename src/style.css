@@ -354,6 +354,16 @@ a {
     height: 300px;
 }
 
+.add-title-form .preview-box img.square {
+    width: 300px;
+    height: 300px;
+}
+
+.add-title-form .preview-box:has(img.square) {
+  width: 300px;  
+  height: 300px; 
+}
+
 .add-title-form .form-fields {
     flex: 1;
     display: flex;

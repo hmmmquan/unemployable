@@ -57,11 +57,11 @@ export default function AddATitle() {
     navigate('/', { replace: true });
   };
 
-  // Clear end date field if the user picks film or book
+  // Clear end date field if the user picks film, book, song, album or tv segment
   const handleMediaTypeChange = e => {
     const type = e.target.value;
     setMediaType(type);
-    if (type === 'Film' || type === 'Book') {
+    if (['Film','Book','Song','Album','TV_Segment'].includes(type)) {
       setEndDate('');
     }
   };
@@ -72,7 +72,7 @@ export default function AddATitle() {
     if (img) setRotateImg(img.naturalWidth > img.naturalHeight);
   };
 
-  // Insert into title table
+  // Insert into title table and matching subtype table
   const handleSubmit = async e => {
     e.preventDefault();
     setSubmitError('');
@@ -85,25 +85,89 @@ export default function AddATitle() {
       status,
       cover_image_url:  coverUrl,
       release_date:     releaseDate || null,
-      end_date: mediaType === 'Film' || mediaType === 'Book' ? null : endDate || null,
+      end_date:         ['Film','Book','Song','Album','TV_Segment'].includes(mediaType)
+                          ? null
+                          : endDate || null,
     };
 
-    // Ask Supabase to INSERT and return the new row's id
+    // 1) insert into titles, returning both id and short_id
     const { data, error } = await supabase
       .from('titles')
       .insert([payload])
-      .select('short_id');
+      .select('id, short_id');
 
     if (error) {
       setSubmitError(error.message);
-    } else {
-      const newId = data[0].short_id;
-      navigate(`/title/${newId}`, { replace: true });
+      return;
     }
+
+    const newUuid  = data[0].id;
+    const newShort = data[0].short_id;
+
+    // 2) insert into the matching subtype table
+    try {
+      switch(mediaType) {
+        case 'Film':
+          await supabase.from('films').insert({ title_id: newUuid, total_duration: '00:00:00' });
+          break;
+        case 'TV_Show':
+          await supabase.from('tv_shows').insert({ title_id: newUuid, num_episodes: 0, duration_per_episode: '00:00:00' });
+          break;
+        case 'Drama':
+          await supabase.from('dramas').insert({ title_id: newUuid });
+          break;
+        case 'Special':
+          await supabase.from('specials').insert({ title_id: newUuid });
+          break;
+        case 'Short':
+          await supabase.from('shorts').insert({ title_id: newUuid });
+          break;
+        case 'Manga':
+          await supabase.from('manga').insert({ title_id: newUuid });
+          break;
+        case 'Book':
+          await supabase.from('books').insert({ title_id: newUuid });
+          break;
+        case 'Album':
+          await supabase.from('albums').insert({ title_id: newUuid });
+          break;
+        case 'Song':
+          await supabase.from('songs').insert({ title_id: newUuid, duration: '00:00:00' });
+          break;
+        case 'TV_Segment':
+          await supabase.from('tv_segments').insert({ title_id: newUuid, duration: '00:00:00' });
+          break;
+        default:
+          break;
+      }
+    } catch (subError) {
+      console.error('Subtype insert error:', subError);
+    }
+
+    // finally navigate to the new title page
+    navigate(`/title/${newShort}`, { replace: true });
   };
 
-  const mediaTypes = ['Film','TV_Show','Drama','Special','Short','Manga','Book'];
-  const statuses   = ['Unconfirmed','Announced','Not Yet Released','Releasing','Finished','Cancelled'];
+  const mediaTypes = [
+    'Film',
+    'TV_Show',
+    'Drama',
+    'Special',
+    'Short',
+    'Manga',
+    'Book',
+    'Album',
+    'Song',
+    'TV_Segment'
+  ];
+  const statuses   = [
+    'Unconfirmed',
+    'Announced',
+    'Not Yet Released',
+    'Releasing',
+    'Finished',
+    'Cancelled'
+  ];
 
   return (
     <div className="profile-layout">
@@ -131,8 +195,8 @@ export default function AddATitle() {
           </div>
         </div>
         <div className="bio-nav">
-          <Link to="/dashboard"><i class="ph ph-files"></i> <span class="nav-label">Dashboard</span></Link>
-          <Link to="/title/add"><i class="ph ph-hard-drives"></i> <span class="nav-label">Add A Title</span></Link>
+          <Link to="/dashboard"><i className="ph ph-files"></i> <span className="nav-label">Dashboard</span></Link>
+          <Link to="/title/add"><i className="ph ph-hard-drives"></i> <span className="nav-label">Add A Title</span></Link>
           <button onClick={handleLogout} className="nav-link-button"><i className="ph ph-sign-out"></i> <span className="nav-label">Log Out</span></button>
         </div>
       </section>
@@ -161,7 +225,7 @@ export default function AddATitle() {
                       src={coverUrl}
                       alt="Cover preview"
                       onLoad={handleImageLoad}
-                      className={rotateImg ? 'rotated' : ''}
+                      className={`${rotateImg ? 'rotated' : ''}${['Album','Song'].includes(mediaType) ? ' square' : ''}`}  
                     />
                   )}
                 </div>
@@ -243,7 +307,6 @@ export default function AddATitle() {
                   </div>
 
                   <div className="form-row-two">
-
                     <div className="form-group">
                       <label>Release Date</label>
                       <input
@@ -259,11 +322,10 @@ export default function AddATitle() {
                         type="date"
                         value={endDate}
                         onChange={e => setEndDate(e.target.value)}
-                        disabled={mediaType === 'Film' || mediaType === 'Book'}
+                        disabled={['Film','Book','Song','Album','TV_Segment'].includes(mediaType)}
                       />
-                      <span>If unknown, leave blank. Disabled for films and books by default.</span>
+                      <span>If unknown, leave blank.</span>
                     </div>
-                  
                   </div>
 
                   {submitError && (
