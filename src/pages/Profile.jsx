@@ -187,7 +187,7 @@ export default function Profile() {
         <section id="topbar">
           <Link to="/"><i class="ph ph-house-line"></i>Home</Link>
           
-          {profile && (
+          {session && (
             <Link to="/dashboard"><i className="ph ph-chalkboard-teacher"></i>Dashboard</Link>
           )}
 
@@ -199,11 +199,9 @@ export default function Profile() {
             <Link to={`/profile/${myUsername}`}><i class="ph ph-user"></i>Profile</Link>
           )}
           
-          {profile && (
+          {session ? (
             <button onClick={handleLogout} className="log-button"><i className="ph ph-sign-out"></i>Log out</button>
-          )}
-
-          {!profile && (
+          ) : (
             <Link to="/"><i className="ph ph-sign-in"></i>Log in</Link>
           )}
         </section>
