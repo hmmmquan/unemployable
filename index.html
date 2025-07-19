@@ -25,10 +25,14 @@
           target: '[title]',
           animation: 'scale',
           placement: 'bottom',
-          content(reference) {
-            const txt = reference.getAttribute('title');
-            reference.removeAttribute('title');
-            return txt;
+          content: '',
+          onShow(instance) {
+            const ref = instance.reference;
+            const title = ref.getAttribute('title');
+            if (title) {
+              instance.setContent(title);
+              ref.removeAttribute('title');
+            }
           }
         });
       });

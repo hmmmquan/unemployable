@@ -5,6 +5,7 @@ import { supabase }            from '../supabaseClient';
 import defaultAvatar           from '../assets/default avatar.jpg';
 
 export default function Connections() {
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [profile,      setProfile]      = useState(null);
   const [stalkersList, setStalkersList] = useState([]);
   const [stalkedList,  setStalkedList]  = useState([]);
@@ -110,7 +111,20 @@ export default function Connections() {
 
   return (
     <div className="profile-layout">
-      <section id="sidebar">
+      <section 
+        id="sidebar"
+        className={sidebarCollapsed ? 'collapsed' : ''}
+      >
+        <div className="toggle-section">
+          <button 
+            className="nav-link-button" 
+            title={sidebarCollapsed ? 'Show sidebar' : 'Hide sidebar'}
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+          >
+            <i className={`ph ph-caret-circle-${sidebarCollapsed ? 'right' : 'left'}`}></i>
+          </button>
+        </div>
+
         <div className="bio-header">
           <Link to="/dashboard" className="bio-avatar">
             <img
