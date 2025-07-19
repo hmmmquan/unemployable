@@ -24,6 +24,14 @@ export default function Title() {
   const [companies, setCompanies] = useState([]);
   const [creator, setCreator] = useState(null);
 
+  // Edit fields
+  const [isEditing, setIsEditing] = useState(false);
+  const [nativeInput, setNativeInput] = useState('');
+  const [synopsisInput, setSynopsisInput] = useState('');
+  const [statusInput, setStatusInput] = useState('');
+  const [releaseInput, setReleaseInput] = useState('');
+  const [endInput, setEndInput] = useState('');
+
   // Cover preview rotation
   const [rotateImg, setRotateImg] = useState(false);
   const imgRef = useRef();
@@ -55,16 +63,21 @@ export default function Title() {
         .single();
       if (tErr || !t) return navigate('/titles', { replace: true });
       setTitle(t);
-      
+
+      setNativeInput(t.native_title);
+      setSynopsisInput(t.synopsis || '');
+      setStatusInput(t.status);
+      setReleaseInput(t.release_date || '');
+      setEndInput(t.end_date || '');
+
       if (t.created_by) {
         const { data: c } = await supabase
-            .from('users')
-            .select('username')
-            .eq('uuid', t.created_by)
-            .single();
+          .from('users')
+          .select('username')
+          .eq('uuid', t.created_by)
+          .single();
         if (c) setCreator(c.username);
       }
-
 
       if (t.type === 'Film') {
         const { data: f } = await supabase
@@ -135,7 +148,16 @@ export default function Title() {
   // Rotate cover if needed
   const handleImageLoad = () => {
     const img = imgRef.current;
-    if (img) setRotateImg(img.naturalWidth > img.naturalHeight);
+    if (!img) return;
+    if (['Album', 'Song'].includes(title.type)) {
+      setRotateImg(false);
+    } else {
+      setRotateImg(img.naturalWidth > img.naturalHeight);
+    }
+  };
+
+  const handleSave = async () => {
+
   };
 
   if (!title) return null;
@@ -197,16 +219,37 @@ export default function Title() {
           )}
         </div>
         <div className="bio-nav">
-          <button className="nav-link-button">
+          <button
+            className="nav-link-button"
+            onClick={() => {
+              if (!session) return navigate('/', { replace: true });
+              // TODO: implement “Log This Title” action
+            }}
+          >
             <i className="ph ph-note-pencil"></i> Log This Title
           </button>
-          <button className="nav-link-button">
+
+          <button
+            className="nav-link-button"
+            onClick={() => {
+              if (!session) return navigate('/', { replace: true });
+              setIsEditing(true);
+            }}
+          >
             <i className="ph ph-eraser"></i> Edit This Title
           </button>
-          <button className="nav-link-button">
+
+          <button
+            className="nav-link-button"
+            onClick={() => {
+              if (!session) return navigate('/', { replace: true });
+              // TODO: implement “Add to Favorites” action
+            }}
+          >
             <i className="ph ph-heart"></i> Add to Favorites
           </button>
         </div>
+
       </section>
 
       <section id="right-content">
@@ -259,88 +302,105 @@ export default function Title() {
               </div>
               <div className="form-fields">
                 <div className="form-row-two">
-                    <div className="form-group">
-                        <label>Media Type</label>
-                        <span>{title.type.replace(/_/g, ' ')}</span>
-                    </div>
-                    <div className="form-group">
-                        <label>Status</label>
-                        <span>{title.status}</span>
-                    </div>
-                    <div className="form-group">
-                        <label>Added By</label>
-                        <span>{creator && (<Link to={`/profile/${creator}`}>{creator}</Link>)}</span>
-                    </div>
+                  <div className="form-group">
+                    <label>Media Type</label>
+                    <span>{title.type.replace(/_/g, ' ')}</span>
+                  </div>
+                  <div className="form-group">
+                    <label>Status</label>
+                    <span>{title.status}</span>
+                  </div>
+                  <div className="form-group">
+                    <label>Added By</label>
+                    <span>{creator && (<Link to={`/profile/${creator}`}>{creator}</Link>)}</span>
+                  </div>
                 </div>
                 <div className="form-group">
-                    <label>Native Title</label>
-                    <span>{title.native_title}</span>
+                  <label>Native Title</label>
+                  <span>{title.native_title}</span>
                 </div>
                 <div className="form-group">
-                    <label>Synopsis</label>
-                    <span>{title.synopsis}</span>
+                  <label>Synopsis</label>
+                  <span>{title.synopsis}</span>
                 </div>
                 <div className="form-row-two">
-                    <div className="form-group">
-                        <label>Release Date</label>
-                        <span>{title.release_date?.slice(0, 10).replace(/-/g, '/')}</span>
-                    </div>
-                    <div className="form-group">
-                        <label>End Date</label>
-                        <span>{title.end_date?.slice(0, 10).replace(/-/g, '/')}</span>
-                    </div>
+                  <div className="form-group">
+                    <label>Release Date</label>
+                    <span>{title.release_date?.slice(0, 10).replace(/-/g, '/')}</span>
+                  </div>
+                  <div className="form-group">
+                    <label>End Date</label>
+                    <span>{title.end_date?.slice(0, 10).replace(/-/g, '/')}</span>
+                  </div>
                 </div>
                 {title.type === 'Film' && (
-                    <>
-                        <div className="form-row-two">
-                            <div className="form-group">
-                                <label>Total Duration</label>
-                                <span>{filmProps.total_duration}</span>
-                            </div>
-                            <div className="form-group">
-                                <label>Content Rating</label>
-                                <span>{rating}</span>
-                            </div>
-                        </div>
-                        <div className="form-row-two">
-                            <div className="form-group">
-                                <label>Production Countries</label>
-                                <span>{countries.join(', ')}</span>
-                            </div>
-                            <div className="form-group">
-                                <label>Languages</label>
-                                <span>{languages.join(', ')}</span>
-                            </div>
-                        </div>
-                        <div className="form-group">
-                            <label>Alternate Titles</label>
-                            <span>{altTitles.join(', ')}</span>
-                        </div>
-                        <div className="form-group">
-                            <label>Production Companies</label>
-                            <span>{companies.map(c => `${c.name}${c.role ? ` (${c.role})` : ''}`).join(', ')}</span>
-                        </div>
-                        <div className="form-group">
-                            <label>Related Titles</label>
-                            <span>
-                                {related.map(r => (
-                                    <Link key={r.id} to={`/titles/${r.short}`}>{r.known || r.native}</Link>
-                                ))}
-                            </span>
-                        </div>
-                        <div className="form-group">
-                            <label>External Links</label>
-                            <span>
-                                {externalLinks.map(l => (
-                                    <a key={l.url} href={l.url} target="_blank" rel="noopener noreferrer">
-                                        {l.link_label || l.url}
-                                    </a>
-                                ))}
-                            </span>
-                        </div>
-                    </>
+                  <>
+                    <div className="form-row-two">
+                      <div className="form-group">
+                        <label>Total Duration</label>
+                        <span>{filmProps.total_duration}</span>
+                      </div>
+                      <div className="form-group">
+                        <label>Content Rating</label>
+                        <span>{rating}</span>
+                      </div>
+                    </div>
+                    <div className="form-row-two">
+                      <div className="form-group">
+                        <label>Production Countries</label>
+                        <span>{countries.join(', ')}</span>
+                      </div>
+                      <div className="form-group">
+                        <label>Languages</label>
+                        <span>{languages.join(', ')}</span>
+                      </div>
+                    </div>
+                    <div className="form-group">
+                      <label>Alternate Titles</label>
+                      <span>{altTitles.join(', ')}</span>
+                    </div>
+                    <div className="form-group">
+                      <label>Production Companies</label>
+                      <span>{companies.map(c => `${c.name}${c.role ? ` (${c.role})` : ''}`).join(', ')}</span>
+                    </div>
+                    <div className="form-group">
+                      <label>Related Titles</label>
+                      <span>
+                        {related.map(r => (
+                          <Link key={r.id} to={`/titles/${r.short}`}>{r.known || r.native}</Link>
+                        ))}
+                      </span>
+                    </div>
+                    <div className="form-group">
+                      <label>External Links</label>
+                      <span>
+                        {externalLinks.map(l => (
+                          <a key={l.url} href={l.url} target="_blank" rel="noopener noreferrer">
+                            {l.link_label || l.url}
+                          </a>
+                        ))}
+                      </span>
+                    </div>
+                  </>
                 )}
-        
+
+                {isEditing && (
+                  <section className="edit-section">
+                    <button
+                      className="create-title-button"
+                      onClick={handleSave /* your update handler */}
+                    >
+                      Save Changes
+                    </button>
+                    <button
+                      className="create-title-button"
+                      onClick={() => setIsEditing(false)}
+                    >
+                      Cancel
+                    </button>
+                  </section>
+                )}
+
               </div>
             </div>
           </div>
