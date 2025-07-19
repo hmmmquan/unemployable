@@ -76,6 +76,11 @@ export default function Profile() {
 
   if (!profile) return null;
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/', { replace: true });
+  };
+
   const joinedDate = profile.created_at.slice(0, 10).replace(/-/g, '/');
   const isOwn      = session?.user.id === profile.uuid;
   const isAnon     = !session;
@@ -125,7 +130,7 @@ export default function Profile() {
             title={sidebarCollapsed ? 'Show sidebar' : 'Hide sidebar'}
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
           >
-            <i className={`ph ph-caret-circle-${sidebarCollapsed ? 'right' : 'left'}`}></i>
+            <i className={`ph ${sidebarCollapsed ? 'ph-arrows-out-simple' : 'ph-arrows-in-simple'}`}></i>
           </button>
         </div>
 
@@ -164,10 +169,27 @@ export default function Profile() {
 
       <section id="right-content">
         <section id="topbar">
-          <i className="ph ph-files"></i>{' '}
-          <Link to={`/profile/${profile.username}`}>
-            {profile.username}'s Profile
-          </Link>
+          <Link to="/"><i class="ph ph-house-line"></i>Home</Link>
+          
+          {profile && (
+            <Link to="/dashboard"><i className="ph ph-chalkboard-teacher"></i>Dashboard</Link>
+          )}
+
+          <Link to="/titles"><i class="ph ph-files"></i>Titles</Link>
+          
+          <Link to="/people"><i class="ph ph-files"></i>People</Link>
+
+          {profile && (
+            <Link to={`/profile/${profile.username}`}><i class="ph ph-user"></i>Profile</Link>
+          )}
+          
+          {profile && (
+            <button onClick={handleLogout} className="log-button"><i className="ph ph-sign-out"></i>Log out</button>
+          )}
+
+          {!profile && (
+            <Link to="/"><i className="ph ph-sign-in"></i>Log in</Link>
+          )}
         </section>
 
         <section id="main-content">

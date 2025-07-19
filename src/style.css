@@ -233,18 +233,36 @@ a {
 }
 
 #topbar {
+    position: sticky;
+    top: 0;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 20px;
     height: 40px;
     background-color: var(--topbar-background-color);
     color: var(--topbar-font-color);
-    padding: 5px 10px;
+    padding: 0 20px;
 }
 
 #topbar a {
+    display: flex;
+    align-items: center;
+    gap: 5px;
     color: var(--topbar-font-color);
     text-decoration: none;
+}
+
+.log-button {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: none;
+    color: var(--topbar-font-color);
+    padding: 0;
+    font: inherit;  
+    font-weight: var(--main-link-font-weight);
+    cursor: pointer;
+    border: none;
 }
 
 #main-content {

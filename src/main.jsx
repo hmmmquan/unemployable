@@ -16,7 +16,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/connections" element={<Connections />} />
         <Route path="/profile/:username" element={<Profile />} />
-        <Route path="/title/add" element={<AddATitle />} />
+        <Route path="/titles/add" element={<AddATitle />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

@@ -170,7 +170,7 @@ export default function AddATitle() {
     }
 
     // Navigate to the new title page
-    navigate(`/title/${newShort}`, { replace: true });
+    navigate(`/titles/${newShort}`, { replace: true });
   };
 
   const mediaTypes = [
@@ -207,9 +207,10 @@ export default function AddATitle() {
             title={sidebarCollapsed ? 'Show sidebar' : 'Hide sidebar'}
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
           >
-            <i className={`ph ph-caret-circle-${sidebarCollapsed ? 'right' : 'left'}`}></i>
+            <i className={`ph ${sidebarCollapsed ? 'ph-arrows-out-simple' : 'ph-arrows-in-simple'}`}></i>
           </button>
         </div>
+        
         <div className="bio-header">
           <Link to="/dashboard" className="bio-avatar">
             <img
@@ -233,24 +234,41 @@ export default function AddATitle() {
           </div>
         </div>
         <div className="bio-nav">
-          <Link to="/dashboard"><i className="ph ph-files"></i> <span className="nav-label">Dashboard</span></Link>
-          <Link to="/title/add"><i className="ph ph-hard-drives"></i> <span className="nav-label">Add A Title</span></Link>
-          <button onClick={handleLogout} className="nav-link-button"><i className="ph ph-sign-out"></i> <span className="nav-label">Log Out</span></button>
+          <Link to="/profile"><i class="ph ph-folder-simple-user"></i> <span class="nav-label">Update My Profile</span></Link>
+          <Link to="/titles/add"><i class="ph ph-file-plus"></i> <span class="nav-label">Add A Title</span></Link>
+          <Link to="/people/add"><i class="ph ph-file-plus"></i> <span class="nav-label">Add A Person</span></Link>
         </div>
       </section>
 
       <section id="right-content">
         <section id="topbar">
-          <i className="ph ph-files"></i>
-          <Link to="/dashboard">{profile.username}'s Dashboard</Link>
-          <i className="ph ph-arrow-right"></i>
-          <Link to="/title/add">Add A Title</Link>
+          <Link to="/"><i class="ph ph-house-line"></i>Home</Link>
+          
+          {profile && (
+            <Link to="/dashboard"><i className="ph ph-chalkboard-teacher"></i>Dashboard</Link>
+          )}
+
+          <Link to="/titles"><i class="ph ph-files"></i>Titles</Link>
+          
+          <Link to="/people"><i class="ph ph-files"></i>People</Link>
+
+          {profile && (
+            <Link to={`/profile/${profile.username}`}><i class="ph ph-user"></i>Profile</Link>
+          )}
+          
+          {profile && (
+            <button onClick={handleLogout} className="log-button"><i className="ph ph-sign-out"></i>Log out</button>
+          )}
+
+          {!profile && (
+            <Link to="/"><i className="ph ph-sign-in"></i>Log in</Link>
+          )}
         </section>
 
         <section id="main-content">
           <div className="add-title-container">
             <span className="section-title">
-              <i className="ph ph-hard-drives"></i> Add A Title
+              <i className="ph ph-file-plus"></i> Add A Title
             </span>
 
             <form className="add-title-form" onSubmit={handleSubmit}>
