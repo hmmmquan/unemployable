@@ -379,14 +379,14 @@ a {
     box-shadow: var(--box-shadow);
 }
 
-.add-title-form .form-layout {
+.form-layout {
     display: flex;
     gap: 30px;
     align-items: flex-start;
     margin-top: 10px;
 }
 
-.add-title-form .preview-box {
+.preview-box {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -397,41 +397,41 @@ a {
     overflow: hidden;
 }
 
-.add-title-form .preview-box img {
+.preview-box img {
     height: 450px;
     object-fit: cover;
 }
 
-.add-title-form .preview-box img.rotated {
+.preview-box img.rotated {
     transform: rotate(-90deg);
     height: 300px;
 }
 
-.add-title-form .preview-box img.square {
+.preview-box img.square {
     width: 300px;
     height: 300px;
 }
 
-.add-title-form .preview-box:has(img.square) {
+.preview-box:has(img.square) {
   width: 300px;  
   height: 300px; 
 }
 
-.add-title-form .form-fields {
+.form-fields {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
-.add-title-form .form-group {
+.form-group {
     flex: 1;
     display: flex;
     gap: 10px;
     flex-direction: column;
 }
 
-.add-title-form .form-row-two {
+.form-row-two {
   display: flex;
   gap: 20px;
 }
