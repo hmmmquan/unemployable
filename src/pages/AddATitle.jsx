@@ -52,7 +52,6 @@ export default function AddATitle() {
   if (!profile) return null;
 
   const joinedDate = profile.created_at.slice(0,10).replace(/-/g,'/');
-
   const userId     = profile.uuid;
 
   const handleLogout = async () => {
@@ -129,44 +128,91 @@ export default function AddATitle() {
     // Insert into the matching subtype table
     try {
       switch(mediaType) {
-        case 'Film':
-          await supabase.from('films').insert({ title_id: newUuid, total_duration: '00:00:00' });
+        case 'Film': {
+          const { error: filmErr } = await supabase
+            .from('films')
+            .insert([{ title_id: newUuid, total_duration: '00:00:00', content_rating_id: '1' }]);
+          if (filmErr) throw filmErr;
           break;
-        case 'TV_Show':
-          await supabase.from('tv_shows').insert({ title_id: newUuid, num_episodes: 0, duration_per_episode: '00:00:00' });
+        }
+        case 'TV_Show': {
+          const { error: showErr } = await supabase
+            .from('tv_shows')
+            .insert([{ title_id: newUuid, num_episodes: 0, duration_per_episode: '00:00:00' }]);
+          if (showErr) throw showErr;
           break;
-        case 'Drama':
-          await supabase.from('dramas').insert({ title_id: newUuid });
+        }
+        case 'Drama': {
+          const { error: dramaErr } = await supabase
+            .from('dramas')
+            .insert([{ title_id: newUuid }]);
+          if (dramaErr) throw dramaErr;
           break;
-        case 'Special':
-          await supabase.from('specials').insert({ title_id: newUuid });
+        }
+        case 'Special': {
+          const { error: specialErr } = await supabase
+            .from('specials')
+            .insert([{ title_id: newUuid }]);
+          if (specialErr) throw specialErr;
           break;
-        case 'Short':
-          await supabase.from('shorts').insert({ title_id: newUuid });
+        }
+        case 'Short': {
+          const { error: shortErr } = await supabase
+            .from('shorts')
+            .insert([{ title_id: newUuid }]);
+          if (shortErr) throw shortErr;
           break;
-        case 'Manga':
-          await supabase.from('manga').insert({ title_id: newUuid });
+        }
+        case 'Manga': {
+          const { error: mangaErr } = await supabase
+            .from('manga')
+            .insert([{ title_id: newUuid }]);
+          if (mangaErr) throw mangaErr;
           break;
-        case 'Book':
-          await supabase.from('books').insert({ title_id: newUuid });
+        }
+        case 'Book': {
+          const { error: bookErr } = await supabase
+            .from('books')
+            .insert([{ title_id: newUuid }]);
+          if (bookErr) throw bookErr;
           break;
-        case 'Album':
-          await supabase.from('albums').insert({ title_id: newUuid });
+        }
+        case 'Album': {
+          const { error: albumErr } = await supabase
+            .from('albums')
+            .insert([{ title_id: newUuid }]);
+          if (albumErr) throw albumErr;
           break;
-        case 'Song':
-          await supabase.from('songs').insert({ title_id: newUuid, duration: '00:00:00' });
+        }
+        case 'Song': {
+          const { error: songErr } = await supabase
+            .from('songs')
+            .insert([{ title_id: newUuid, duration: '00:00:00' }]);
+          if (songErr) throw songErr;
           break;
-        case 'TV_Segment':
-          await supabase.from('tv_segments').insert({ title_id: newUuid, duration: '00:00:00' });
+        }
+        case 'TV_Segment': {
+          const { error: segErr } = await supabase
+            .from('tv_segments')
+            .insert([{ title_id: newUuid, duration: '00:00:00' }]);
+          if (segErr) throw segErr;
           break;
-        case 'Stage_Play':
-          await supabase.from('stage_plays').insert({ title_id: newUuid, total_duration: '00:00:00' });
+        }
+        case 'Stage_Play': {
+          const { error: playErr } = await supabase
+            .from('stage_plays')
+            .insert([{ title_id: newUuid, total_duration: '00:00:00' }]);
+          if (playErr) throw playErr;
           break;
+        }
         default:
           break;
       }
     } catch (subError) {
-      console.error('Subtype insert error:', subError);
+      // Roll back the title, since the film row failed
+      await supabase.from('titles').delete().eq('id', newUuid);
+      setSubmitError(subError.message);
+      return;
     }
 
     // Navigate to the new title page
@@ -234,26 +280,25 @@ export default function AddATitle() {
           </div>
         </div>
         <div className="bio-nav">
-          <Link to="/profile"><i class="ph ph-folder-simple-user"></i> <span class="nav-label">Update My Profile</span></Link>
-          <Link to="/titles/add"><i class="ph ph-file-plus"></i> <span class="nav-label">Add A Title</span></Link>
-          <Link to="/people/add"><i class="ph ph-file-plus"></i> <span class="nav-label">Add A Person</span></Link>
+          <Link to="/profile"><i className="ph ph-folder-simple-user"></i> <span className="nav-label">Update My Profile</span></Link>
+          <Link to="/titles/add"><i className="ph ph-file-plus"></i> <span className="nav-label">Add A Title</span></Link>
+          <Link to="/people/add"><i className="ph ph-file-plus"></i> <span className="nav-label">Add A Person</span></Link>
         </div>
       </section>
 
       <section id="right-content">
         <section id="topbar">
-          <Link to="/"><i class="ph ph-house-line"></i>Home</Link>
-          
+          <Link to="/"><i className="ph ph-house-line"></i>Home</Link>
           {profile && (
             <Link to="/dashboard"><i className="ph ph-chalkboard-teacher"></i>Dashboard</Link>
           )}
 
-          <Link to="/titles"><i class="ph ph-files"></i>Titles</Link>
+          <Link to="/titles"><i className="ph ph-files"></i>Titles</Link>
           
-          <Link to="/people"><i class="ph ph-files"></i>People</Link>
+          <Link to="/people"><i className="ph ph-files"></i>People</Link>
 
           {profile && (
-            <Link to={`/profile/${profile.username}`}><i class="ph ph-user"></i>Profile</Link>
+            <Link to={`/profile/${profile.username}`}><i className="ph ph-user"></i>Profile</Link>
           )}
           
           {profile && (
