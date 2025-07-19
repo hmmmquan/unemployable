@@ -13,6 +13,7 @@ export default function Profile() {
   const [isStalking,   setIsStalking]   = useState(false);
   const [stalkersList, setStalkersList] = useState([]);
   const [stalkedList,  setStalkedList]  = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
