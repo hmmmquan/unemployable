@@ -1,6 +1,6 @@
 // src/pages/Profile.jsx
 import { useState, useEffect } from 'react';
-import { useParams, Link }     from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { supabase }            from '../supabaseClient';
 import defaultAvatar           from '../assets/default avatar.jpg';
 
@@ -9,9 +9,24 @@ export default function Profile() {
   const { username } = useParams();
   const [profile,      setProfile]      = useState(null);
   const [session,      setSession]      = useState(null);
+  const [myUsername,   setMyUsername]   = useState(null);
   const [isStalking,   setIsStalking]   = useState(false);
   const [stalkersList, setStalkersList] = useState([]);
   const [stalkedList,  setStalkedList]  = useState([]);
+
+  useEffect(() => {
+    (async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      // Fetch your user record so we know your username
+      const { data: me } = await supabase
+        .from('users')
+        .select('username')
+        .eq('uuid', session.user.id)
+        .single();
+      if (me) setMyUsername(me.username);
+    })();
+  }, []);
 
   const load = async () => {
     // clear out old data on every profile change
@@ -179,8 +194,8 @@ export default function Profile() {
           
           <Link to="/people"><i class="ph ph-files"></i>People</Link>
 
-          {profile && (
-            <Link to={`/profile/${profile.username}`}><i class="ph ph-user"></i>Profile</Link>
+          {myUsername && (
+            <Link to={`/profile/${myUsername}`}><i class="ph ph-user"></i>Profile</Link>
           )}
           
           {profile && (
